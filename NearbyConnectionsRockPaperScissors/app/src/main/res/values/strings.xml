@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">Rock Paper Scissors</string>
+  <string name="app_name">Mosip POC</string>
   <string name="error_missing_permissions">Cannot start without required permissions</string>
 
   <string name="codename">Your codename: %s</string>
-  <string name="opponent_name">Opponent: %s</string>
-  <string name="no_opponent">none (yet)</string>
+  <string name="receiver_name">Receiver: %s</string>
+  <string name="no_receiver">none (yet)</string>
 
   <string name="status_disconnected">Disconnected</string>
   <string name="status_searching">Searching</string>

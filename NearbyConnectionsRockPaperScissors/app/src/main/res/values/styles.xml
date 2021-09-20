@@ -16,9 +16,29 @@
     <item name="android:textColor">@color/toggle_tint</item>
   </style>
 
+  <style name="MoveButton2" parent="Widget.AppCompat.Button.Borderless">
+    <item name="android:layout_width">0dp</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_weight">1</item>
+    <item name="android:onClick">sendFile</item>
+    <item name="android:textColor">@color/toggle_tint</item>
+  </style>
+
   <style name="StatusText">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:textSize">22sp</item>
+  </style>
+
+  <style name="StatusText1">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textSize">20sp</item>
+  </style>
+
+  <style name="StatusText2">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textSize">18sp</item>
   </style>
 </resources>

@@ -10,20 +10,20 @@
       style="@style/StatusText"/>
 
   <TextView
-      android:id="@+id/opponent_name"
-      style="@style/StatusText"/>
+      android:id="@+id/receiver_name"
+      style="@style/StatusText1"/>
 
   <TextView
       android:id="@+id/status"
-      style="@style/StatusText"/>
+      style="@style/StatusText2"/>
 
   <TextView
-      android:id="@+id/score"
+      android:id="@+id/recievedMessage"
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_weight="1"
       android:gravity="center"
-      android:textSize="80sp"/>
+      android:textSize="36sp"/>
 
   <LinearLayout
       android:layout_width="match_parent"
@@ -31,37 +31,29 @@
       android:orientation="horizontal">
 
     <Button
-        android:id="@+id/rock"
+        android:id="@+id/sendMessage"
         android:drawableTop="@drawable/rock"
-        android:text="@string/choice_rock"
+        android:text="Send Message"
         style="@style/MoveButton"/>
 
     <Button
-        android:id="@+id/paper"
+        android:id="@+id/sendFile"
         android:drawableTop="@drawable/paper"
-        android:text="@string/choice_paper"
-        style="@style/MoveButton"/>
-
-    <Button
-        android:id="@+id/scissors"
-        android:drawableTop="@drawable/scissors"
-        android:text="@string/choice_scissors"
-        style="@style/MoveButton"/>
+        android:text="Send File"
+        style="@style/MoveButton2"/>
   </LinearLayout>
 
   <Button
-      android:id="@+id/find_opponent"
+      android:id="@+id/connect"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:onClick="findOpponent"
-      android:text="@string/action_find_opponents"
+      android:text="Connect"
       style="@style/Widget.AppCompat.Button.Colored"/>
 
   <Button
       android:id="@+id/disconnect"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:onClick="disconnect"
       android:text="@string/action_disconnect"
       style="@style/Widget.AppCompat.Button.Colored"/>
 </LinearLayout>
