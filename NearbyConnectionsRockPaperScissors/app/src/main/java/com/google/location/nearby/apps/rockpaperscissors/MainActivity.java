@@ -4,12 +4,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.View;
@@ -65,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.ACCESS_WIFI_STATE,
                     Manifest.permission.CHANGE_WIFI_STATE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION,
             };
@@ -74,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.ACCESS_WIFI_STATE,
                     Manifest.permission.CHANGE_WIFI_STATE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -242,15 +248,8 @@ public class MainActivity extends AppCompatActivity {
         });
         // Send File
         sendFileButton.setOnClickListener(view -> {
-            showImageChooser();
+            showFileChooser();
         });
-
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     @Override
@@ -317,10 +316,6 @@ public class MainActivity extends AppCompatActivity {
     public void sendMessage(String message) {
         connectionsClient.sendPayload(receiverEndpointId, Payload.fromBytes(message.getBytes(UTF_8)));
         setStatusText("Message sent");
-    }
-
-    public void sendFile(View view) {
-        showImageChooser();
     }
 
     /**
@@ -397,9 +392,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Fires an intent to spin up the file chooser UI and select an image for sending to endpointId.
+     * Fires an intent to spin up the file chooser UI and select a file for sending to endpointId.
      */
-    private void showImageChooser() {
+    private void showFileChooser() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
@@ -417,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
             String endpointId = resultData.getStringExtra(ENDPOINT_ID_EXTRA);
             if (endpointId == null) { // TBD: Didn't propagate. Why?
                 endpointId = receiverEndpointId;
+                setStatusText("Sending File...");
             }
 
             // The URI of the file selected by the user.
@@ -434,6 +430,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Send the file content payload.
             connectionsClient.sendPayload(endpointId, filePayload);
+            setStatusText("File Sent");
         }
     }
 
@@ -448,13 +445,19 @@ public class MainActivity extends AppCompatActivity {
             // Because of https://developer.android.com/preview/privacy/scoped-storage, we are not
             // allowed to access filepaths from another process directly. Instead, we must open the
             // uri using our ContentResolver.
+            String mosipPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+ "/Mosip";
+            File mosipDir = new File(mosipPath);
+            if (!mosipDir.exists()) mosipDir.mkdirs();
+
             Uri uri = filePayload.asFile().asUri();
             try {
                 // Copy the file to a new location.
                 InputStream in = getApplicationContext().getContentResolver().openInputStream(uri);
-                copyStream(in, new FileOutputStream(new File(getApplicationContext().getCacheDir(), filename)));
+                copyStream(MainActivity.this, in, new FileOutputStream(new File(mosipPath, filename)));
+                setStatusText(filename + "is Received");
             } catch (IOException e) {
                 // Log the error.
+                e.printStackTrace();
             } finally {
                 // Delete the original file.
                 getApplicationContext().getContentResolver().delete(uri, null, null);
@@ -463,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Copies a stream from one location to another. */
-    private static void copyStream(InputStream in, OutputStream out) throws IOException {
+    private static void copyStream(Context context, InputStream in, OutputStream out) throws IOException {
         try {
             byte[] buffer = new byte[1024];
             int read;
@@ -474,7 +477,14 @@ public class MainActivity extends AppCompatActivity {
         } finally {
             in.close();
             out.close();
+            // Go to Downloads folder
+            AlertDialog.Builder alert = new AlertDialog.Builder(context);
+            alert.setMessage("Please go to Downloads/Mosip folder. \n\nNote:\tFile received is generated to <timestamp-sent>.rx ");
+            alert.setCancelable(false);
+            alert.setPositiveButton("OK", (dialog, whichButton) -> {
+                context.startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS));
+            });
+            alert.show();
         }
     }
-
 }
