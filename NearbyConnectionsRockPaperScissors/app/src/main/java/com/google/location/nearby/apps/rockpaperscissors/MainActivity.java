@@ -324,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
     private void startDiscovery() {
         // Note: Discovery may fail. To keep this demo simple, we don't handle failures.
         connectionsClient.startDiscovery(
-                getPackageName(), endpointDiscoveryCallback,
+                getConnectionID(), endpointDiscoveryCallback,
                 new DiscoveryOptions.Builder().setStrategy(STRATEGY).build());
     }
 
@@ -334,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
     private void startAdvertising() {
         // Note: Advertising may fail. To keep this demo simple, we don't handle failures.
         connectionsClient.startAdvertising(
-                codeName, getPackageName(), connectionLifecycleCallback,
+                codeName, getConnectionID(), connectionLifecycleCallback,
                 new AdvertisingOptions.Builder().setStrategy(STRATEGY).build());
     }
 
@@ -486,5 +486,16 @@ public class MainActivity extends AppCompatActivity {
             });
             alert.show();
         }
+    }
+
+    // Connection ID string value coming from a QR code allows for a
+    // targetted specific connection. Or we can have a generic connection ID string
+    // value of 0000fef3-0000-1000-8000-00805f9b34fb which is coming from getPackageName()
+    private String getConnectionID() {
+        String serviceUUID = null;
+        if (serviceUUID == null) {
+            serviceUUID = getPackageName();
+        }
+        return serviceUUID;
     }
 }
